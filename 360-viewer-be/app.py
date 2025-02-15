@@ -9,9 +9,9 @@ from Repositories.PoiRepository import POIRepository
 from Models.PanoModel import PanoModel
 from Models.PoiModel import POIModel
 from flask_cors import CORS
-
-
 import uuid
+import os
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -32,7 +32,17 @@ def send_swagger():
     return send_from_directory(".", "openapi.yaml")
 
 
-DATABASE_URL = "sqlite:///360viewer.db"
+# Check if running in Azure App Service
+if "WEBSITE_HOSTNAME" in os.environ:  
+    DATABASE_DIR = "/home/data/"  # Azure writable directory
+else:
+    DATABASE_DIR = "./db/"  # Local writable directory
+
+os.makedirs(DATABASE_DIR, exist_ok=True)
+DATABASE_PATH = os.path.join(DATABASE_DIR, "360viewer.db")
+
+DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
+
 engine = create_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(bind=engine)
 meta = MetaData()
