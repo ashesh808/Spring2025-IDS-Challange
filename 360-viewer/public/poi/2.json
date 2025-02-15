@@ -1,7 +1,7 @@
 {
-    "name": "poi1",
-    "ath": "-90",
-    "atv": "20",
+    "name": "poi2",
+    "ath": "90",
+    "atv": "40",
     "type": "blue",
     "description": "poi 2 - view here",
     "pdf": "",
