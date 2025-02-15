@@ -6,6 +6,7 @@ pano = Table(
    'pano', meta, 
    Column('id', Integer, primary_key = True), 
    Column('preview', String), 
+   Column('url', String), 
    Column('title', String), 
 )
 

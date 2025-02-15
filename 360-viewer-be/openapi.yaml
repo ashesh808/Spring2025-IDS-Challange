@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: 360 Viewer API
+  description: API for managing Panoramas and Points of Interest (POIs) in a 360 viewer.
+  version: 1.0.0
+
+servers:
+  - url: http://127.0.0.1:8000
+    description: Local development server
+
+paths:
+  /pois:
+    get:
+      summary: Get all POIs
+      description: Retrieve a list of all Points of Interest (POIs).
+      responses:
+        "200":
+          description: A list of POIs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/POI"
+
+    post:
+      summary: Create a new POI
+      description: Add a new Point of Interest (POI) to the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/POI"
+      responses:
+        "201":
+          description: POI created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 123456789
+                  message:
+                    type: string
+                    example: "POI created successfully"
+        "400":
+          description: Invalid request data
+
+  /pois/{poi_id}:
+    get:
+      summary: Get a specific POI
+      description: Retrieve details of a single POI by its ID.
+      parameters:
+        - name: poi_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: POI details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/POI"
+        "404":
+          description: POI not found
+
+    put:
+      summary: Update a POI
+      description: Modify the details of an existing POI.
+      parameters:
+        - name: poi_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/POI"
+      responses:
+        "200":
+          description: POI updated successfully
+        "404":
+          description: POI not found
+
+    delete:
+      summary: Delete a POI
+      description: Remove a POI from the system.
+      parameters:
+        - name: poi_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: POI deleted successfully
+        "404":
+          description: POI not found
+
+  /panos:
+    get:
+      summary: Get all Panoramas
+      description: Retrieve a list of all available panoramas.
+      responses:
+        "200":
+          description: A list of panoramas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pano"
+
+  /panos/{pano_id}:
+    get:
+      summary: Get a specific Panorama
+      description: Retrieve details of a single panorama by its ID.
+      parameters:
+        - name: pano_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Panorama details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pano"
+        "404":
+          description: Panorama not found
+
+components:
+  schemas:
+    POI:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123456789
+        name:
+          type: string
+          example: "POI 1"
+        ath:
+          type: number
+          format: float
+          example: -90.0
+        atv:
+          type: number
+          format: float
+          example: 120.0
+        type:
+          type: string
+          example: "blue"
+        description:
+          type: string
+          example: "POI 1 - view here"
+        pdf:
+          type: string
+          example: "document.pdf"
+        video:
+          type: string
+          example: "video.mp4"
+
+    Pano:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        preview:
+          type: string
+          example: "1"
+        url:
+          type: string
+          format: uri
+          example: "https://api.viewer.immersiondata.com/api/v1/panoramas/311975/krpano.xml"
+        title:
+          type: string
+          example: "Home Image"
