@@ -1,3 +1,5 @@
+
+
 class PanoRepository:
     def __init__(self):
         return
@@ -10,7 +12,7 @@ class PanoRepository:
         """Retrieve a Pano by ID"""
         return
     
-    def add_pano(self, poi_id: int, pano_data: dict):
+    def add_pano(self, poi_id: int, pano_data: PanoModel):
         return
 
     def update_pano(self, poi_id: int, updated_data: dict):
