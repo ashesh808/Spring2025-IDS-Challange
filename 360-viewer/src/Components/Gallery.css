@@ -1,2 +1,29 @@
-
-
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .gallery-card {
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: calc(33.333% - 14px);
+    min-width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+    background: white;
+  }
+  
+  
+  .gallery-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card-content {
+    padding: 50px;
+  }
