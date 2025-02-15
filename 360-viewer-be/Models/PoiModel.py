@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class POI(BaseModel):
+class POIModel(BaseModel):
     id: int
     name: str
     ath: float
