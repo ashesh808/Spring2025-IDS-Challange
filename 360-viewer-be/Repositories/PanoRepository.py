@@ -1,3 +1,5 @@
+from Models.PanoModel import PanoModel
+
 class PanoRepository:
     def __init__(self):
         return
@@ -9,8 +11,11 @@ class PanoRepository:
     def get_pano(self, poi_id: int):
         """Retrieve a Pano by ID"""
         return
+    
+    def add_pano(self, pano_data: PanoModel):
+        return
 
-    def update_pano(self, poi_id: int, updated_data: dict):
+    def update_pano(self, poi_id: int, updated_data: PanoModel):
         """Update an existing Pano"""
         return
 
