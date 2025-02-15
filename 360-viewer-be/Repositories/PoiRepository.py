@@ -1,3 +1,5 @@
+from Models.PoiModel import POIModel
+
 class POIRepository:
     def __init__(self):
         return
@@ -9,8 +11,11 @@ class POIRepository:
     def get_poi(self, poi_id: int):
         """Retrieve a POI by ID"""
         return
-
-    def update_poi(self, poi_id: int, updated_data: dict):
+    
+    def add_poi(self, poi_data: POIModel):
+        return
+    
+    def update_poi(self, poi_id: int, updated_data: POIModel):
         """Update an existing POI"""
         return
 
