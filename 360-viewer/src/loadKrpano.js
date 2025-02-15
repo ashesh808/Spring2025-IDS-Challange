@@ -1,7 +1,9 @@
 const KRPANO_VIEWER_TARGET_ID = "krpano-target";
 const KRPANO_VIEWER_ID = "krpano-viewer";
 
-const loadKrpano = () => {
+const loadKrpano = (id) => {
+    console.log(`loading pano: ${id}`);
+
     let xmlStr;
 
     let poi_ids = [];
@@ -10,14 +12,31 @@ const loadKrpano = () => {
         try {
             console.log("KRPano is ready!");
 
+            // Ensure XML String is defined before using it
+            if (typeof xmlStr === "undefined" || !xmlStr.trim()) {
+                throw new Error("XML String (xmlStr) is not defined or empty.");
+            }
+
             // Debugging: Print XML to ensure POIs exist
             console.log("Final XML with POIs:", xmlStr);
 
-            // Call loadxml with the modified XML
-            krpano.call(`loadxml(${xmlStr})`);
+            // Call loadxml with the modified XML (Ensure it's wrapped properly)
+            krpano.call(`loadxml('${xmlStr}', KEEP);`);
 
-            // Alternative: Dynamically add POIs after loading XML
-            await addPOIsDynamically(krpano);
+            // Load showtext plugin (Ensure it loads correctly)
+            // krpano.call("loadpano('%VIEWER%/plugins/showtext.xml', KEEP);");
+
+            // Test if showtext works
+            // krpano.call("showtext('Test message', 'default');");
+
+            // Ensure addPOIsDynamically is async if using await
+            if (typeof addPOIsDynamically === "function") {
+                await addPOIsDynamically(krpano);
+            } else {
+                console.warn("addPOIsDynamically is not a function.");
+            }
+
+            console.log("POIs added successfully.");
         } catch (err) {
             console.error("Error loading Krpano XML:", err);
         }
@@ -29,6 +48,32 @@ const loadKrpano = () => {
         removepano(KRPANO_VIEWER_ID);
         const target = document.getElementById(KRPANO_VIEWER_TARGET_ID);
         if (target) target.remove();
+    }
+
+    function getOnClick(poi) {
+        switch (poi.type) {
+            case "blue":
+                return `js(window.handlePoiClick(true, ${poi.description})); lookto(${poi.ath}, ${poi.atv}, 90);`;
+            case "red":
+                return `lookto(${poi.ath}, ${poi.atv}, 90);`;
+            case "green":
+                return `js(window.changeID(${poi.description}));"`;
+            default:
+                return ""; // Ensure it always returns a valid string
+        }
+    }
+
+    function getIcon(poi) {
+        switch (poi.type) {
+            case "blue":
+                return `./info-icon.png`;
+            case "red":
+                return null;
+            case "green":
+                return `./poi-icon.png`;
+            default:
+                return null;
+        }
     }
 
     async function addPOIsDynamically(krpano) {
@@ -58,8 +103,9 @@ const loadKrpano = () => {
                     name: poi.name,
                     ath: poi.ath,
                     atv: poi.atv,
-                    url: poi.icon_url || "./poi-icon.png",
-                    onclick: `showtext('${poi.description}', 5);`,
+                    url: getIcon(poi) || "./info-icon.png",
+                    onclick: getOnClick(poi),
+                    scale: 0.1,
                 }));
 
                 // console.log(poihotspots); // Debugging: Log POI data
@@ -74,13 +120,14 @@ const loadKrpano = () => {
         set(hotspot[${poi.name}].ath, ${poi.ath});
         set(hotspot[${poi.name}].atv, ${poi.atv});
         set(hotspot[${poi.name}].onclick, ${poi.onclick});
+        set(hotspot[${poi.name}].scale, ${poi.scale});
       `);
         });
 
         console.log("POIs added dynamically.");
     }
 
-    fetch("./pano/1.json")
+    fetch(`./pano/${id}.json`)
         .then((res) => res.json())
         .then((pano) => {
             fetch(pano.url)
@@ -92,6 +139,7 @@ const loadKrpano = () => {
                     poi_ids = pano.pois;
 
                     const parser = new DOMParser();
+
                     const xmlDoc = parser.parseFromString(xml, "text/xml");
 
                     // Replace remote nadir url with local asset due to CORS errors
@@ -114,6 +162,7 @@ const loadKrpano = () => {
                     // eslint-disable-next-line no-undef
                     embedpano({
                         xml: xmlStr, // Corrected from `null` to `xmlStr`
+                        //sameorigin: false,
                         html5: "prefer",
                         consolelog: true,
                         capturetouch: false, // prevent default touch event handling from being disabled
