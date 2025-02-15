@@ -21,6 +21,10 @@
 360-viewer/npm-debug.log*
 360-viewer/yarn-debug.log*
 360-viewer/yarn-error.log*
+
+#Backend
 360-viewer-be/__pycache__
-360-viewer-be/360-viewer
 360-viewer-be/360-viewer-venv
+360-viewer-be/Controllers/__pycache__
+360-viewer-be/Models/__pycache__
+360-viewer-be/Repositories/__pycache__
