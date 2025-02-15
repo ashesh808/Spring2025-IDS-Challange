@@ -10,6 +10,9 @@ class POIRepository:
         """Retrieve a POI by ID"""
         return
 
+    def add_poi(self, poi_id: int, poi_data: dict):
+        return
+    
     def update_poi(self, poi_id: int, updated_data: dict):
         """Update an existing POI"""
         return
