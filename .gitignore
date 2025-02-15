@@ -1,0 +1,25 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+360-viewer/node_modules
+360-viewer/.pnp
+360-viewer/.pnp.js
+
+# testing
+360-viewer/coverage
+
+# production
+360-viewer/build
+
+# misc
+360-viewer/.DS_Store
+360-viewer/.env.local
+360-viewer/.env.development.local
+360-viewer/.env.test.local
+360-viewer/.env.production.local
+
+360-viewer/npm-debug.log*
+360-viewer/yarn-debug.log*
+360-viewer/yarn-error.log*
+360-viewer-be/__pycache__
+360-viewer-be/360-viewer
