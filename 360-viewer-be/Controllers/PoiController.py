@@ -1,7 +1,8 @@
 from Models.PoiModel import POIModel
+from Repositories.PoiRepository import POIRepository
 
 class PoiController:
-    def __init__(self, poi_repository):
+    def __init__(self, poi_repository : POIRepository):
         self.poi_repo = poi_repository
 
     def get_all_pois(self):
@@ -18,7 +19,7 @@ class PoiController:
     def add_poi(self, poi_data: POIModel):
         """Adds a new POI to the database."""
         try:
-            self.poi_repo.add(poi_data)
+            self.poi_repo.add_poi(poi_data)
         except Exception as e:
             return {"error": f"Failed to add POI: {str(e)}"}
 

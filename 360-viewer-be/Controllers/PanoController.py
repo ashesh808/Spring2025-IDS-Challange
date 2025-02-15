@@ -18,7 +18,7 @@ class PanoController:
     def add_pano(self, pano_data: PanoModel):
         """Adds a new POI to the database."""
         try:
-            self.pano_repo.add(pano_data)
+            self.pano_repo.add_pano(pano_data)
         except Exception as e:
             return {"error": f"Failed to add POI: {str(e)}"}
 

@@ -1,5 +1,3 @@
-
-
 from Models.PanoModel import PanoModel
 
 class PanoRepository:
