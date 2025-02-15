@@ -1,15 +1,17 @@
 
 
-export default function GalleryIcon({ pano }) {
+export default function GalleryIcon({ name, id, ath, atv, type, description, pdf, video }) {
 
     return (
         <>
             {/* Preview */}
-            <div >
-                <p>{pano}</p>
-            </div>
-            <div>
-                <p>Description content here</p>
+            <div className="gallery-card">
+                <div className="card-content">
+                    <div>
+                        <p>Description: {description}</p>
+                        <p>ath: {ath}</p>
+                    </div>
+                </div>
             </div>
         </>
     );
