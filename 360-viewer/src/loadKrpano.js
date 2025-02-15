@@ -2,6 +2,8 @@ const KRPANO_VIEWER_TARGET_ID = "krpano-target";
 const KRPANO_VIEWER_ID = "krpano-viewer";
 
 const loadKrpano = (id) => {
+    console.log(`loading pano: ${id}`);
+
     let xmlStr;
 
     let poi_ids = [];
@@ -25,7 +27,7 @@ const loadKrpano = (id) => {
             // krpano.call("loadpano('%VIEWER%/plugins/showtext.xml', KEEP);");
 
             // Test if showtext works
-            krpano.call("showtext('Test message', 'default');");
+            // krpano.call("showtext('Test message', 'default');");
 
             // Ensure addPOIsDynamically is async if using await
             if (typeof addPOIsDynamically === "function") {
@@ -55,9 +57,22 @@ const loadKrpano = (id) => {
             case "red":
                 return `lookto(${poi.ath}, ${poi.atv}, 90);`;
             case "green":
-                return `console.log('Green POI: ${poi.description}');`;
+                return `js(window.changeID(${poi.description}));"`;
             default:
                 return ""; // Ensure it always returns a valid string
+        }
+    }
+
+    function getIcon(poi) {
+        switch (poi.type) {
+            case "blue":
+                return `./info-icon.png`;
+            case "red":
+                return null;
+            case "green":
+                return `./poi-icon.png`;
+            default:
+                return null;
         }
     }
 
@@ -88,9 +103,9 @@ const loadKrpano = (id) => {
                     name: poi.name,
                     ath: poi.ath,
                     atv: poi.atv,
-                    url: poi.icon_url || "./info-icon.png",
+                    url: getIcon(poi) || "./info-icon.png",
                     onclick: getOnClick(poi),
-                    scale: 0.25,
+                    scale: 0.1,
                 }));
 
                 // console.log(poihotspots); // Debugging: Log POI data
@@ -106,12 +121,6 @@ const loadKrpano = (id) => {
         set(hotspot[${poi.name}].atv, ${poi.atv});
         set(hotspot[${poi.name}].onclick, ${poi.onclick});
         set(hotspot[${poi.name}].scale, ${poi.scale});
-
-        addlayer(info_${poi.name});
-        set(layer[info_${poi.name}].visible, false);
-        set(layer[info_${poi.name}].type, text);
-        set(layer[info_${poi.name}].align, center);
-        set(layer[info_${poi.name}].zorder, 100);
       `);
         });
 
@@ -153,7 +162,7 @@ const loadKrpano = (id) => {
                     // eslint-disable-next-line no-undef
                     embedpano({
                         xml: xmlStr, // Corrected from `null` to `xmlStr`
-                        sameorigin: false,
+                        //sameorigin: false,
                         html5: "prefer",
                         consolelog: true,
                         capturetouch: false, // prevent default touch event handling from being disabled

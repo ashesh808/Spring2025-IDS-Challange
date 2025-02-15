@@ -4,12 +4,16 @@ import { useLocation } from "react-router-dom";
 
 export default function Krpano() {
     // State to manage the visibility of the info div
-    const [isInfoVisible, setIsInfoVisible] = useState(true);
+    const [isInfoVisible, setIsInfoVisible] = useState(false);
     const [infoText, setInfoText] = useState(""); // Store info text
     // Function to toggle the visibility of the info div and set text
     const handlePoiClick = (visible, description) => {
         setInfoText(description);
         setIsInfoVisible(visible);
+    };
+
+    const changeID = (id) => {
+        window.location.href = `https://localhost:3000/view?id=${id}`;
     };
 
     // Extract the `id` from the query string in the URL
@@ -19,6 +23,7 @@ export default function Krpano() {
 
     useEffect(() => {
         window.handlePoiClick = handlePoiClick;
+        window.changeID = changeID;
         loadKrpano(id);
     }, []);
 
