@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
+from flask_swagger_ui import get_swaggerui_blueprint
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from Controllers.PanoController import PanoController
@@ -7,9 +8,29 @@ from Repositories.PanoRepository import PanoRepository
 from Repositories.PoiRepository import POIRepository
 from Models.PanoModel import PanoModel
 from Models.PoiModel import POIModel
+from flask_cors import CORS
+
+
 import uuid
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+# Swagger UI configuration
+SWAGGER_URL = "/docs"  # URL for accessing Swagger UI
+API_URL = "/static/openapi.yaml"  # Path to OpenAPI YAML file
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={"app_name": "360 Viewer API"}
+)
+
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+@app.route("/static/openapi.yaml")
+def send_swagger():
+    """Serve OpenAPI YAML file."""
+    return send_from_directory(".", "openapi.yaml")
+
 
 DATABASE_URL = "sqlite:///360viewer.db"
 engine = create_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
@@ -17,9 +38,9 @@ SessionLocal = sessionmaker(bind=engine)
 meta = MetaData()
 meta.reflect(bind=engine)
 poi_table = meta.tables["poi"]
+pano_table = meta.tables.get("pano")
 
-
-pano_repo, poi_repo = PanoRepository(), POIRepository(SessionLocal, poi_table)
+pano_repo, poi_repo = PanoRepository(SessionLocal, pano_table), POIRepository(SessionLocal, poi_table)
 pano_controller, poi_controller = PanoController(pano_repo), PoiController(poi_repo)
 
 @app.route("/pois", methods=["GET"])
@@ -80,4 +101,4 @@ def get_pano(pano_id):
     return jsonify(response)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=8000, debug=True)

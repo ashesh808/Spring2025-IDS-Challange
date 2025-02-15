@@ -21,7 +21,7 @@ class POIRepository:
         with self.session_factory() as session:
             query = select(self.poi_table).where(self.poi_table.c.id == poi_id)
             result = session.execute(query).fetchone()
-            return dict(result) if result else None
+            return dict(result._mapping) if result else None
     
     def add_poi(self, poi_data: POIModel):
         """Insert a new POI into the database and debug rollback issues"""

@@ -6,11 +6,11 @@ class PanoController:
 
     def get_all_panos(self):
         """Returns a list of all POIs."""
-        return self.pano_repo.get_all_pois()
+        return self.pano_repo.get_all_panos()
 
     def get_pano(self, pano_id: int):
         """Returns a single POI by ID."""
-        poi = self.pano_repo.get_poi(pano_id)
+        poi = self.pano_repo.get_pano(pano_id)
         if not poi:
             return {"error": f"POI with ID {pano_id} not found."}
         return poi
