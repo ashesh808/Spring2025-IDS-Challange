@@ -1,83 +1,114 @@
 from flask import Flask, jsonify, request, send_from_directory
-import os
+from flask_swagger_ui import get_swaggerui_blueprint
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
+from Controllers.PanoController import PanoController
+from Controllers.PoiController import PoiController
+from Repositories.PanoRepository import PanoRepository
+from Repositories.PoiRepository import POIRepository
+from Models.PanoModel import PanoModel
+from Models.PoiModel import POIModel
+from flask_cors import CORS
 import uuid
+import os
+
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+# Swagger UI configuration
+SWAGGER_URL = "/docs"  # URL for accessing Swagger UI
+API_URL = "/static/openapi.yaml"  # Path to OpenAPI YAML file
 
-# Mock Database (Dictionary)
-pois = {}
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={"app_name": "360 Viewer API"}
+)
 
-# Directory for storing images
-IMAGE_FOLDER = "public/images"
-os.makedirs(IMAGE_FOLDER, exist_ok=True)
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+@app.route("/static/openapi.yaml")
+def send_swagger():
+    """Serve OpenAPI YAML file."""
+    return send_from_directory(".", "openapi.yaml")
 
-### 1. Get All POIs
+
+# Check if running in Azure App Service
+if "WEBSITE_HOSTNAME" in os.environ:  
+    DATABASE_DIR = "/home/data/"  # Azure writable directory
+else:
+    DATABASE_DIR = "./db/"  # Local writable directory
+
+os.makedirs(DATABASE_DIR, exist_ok=True)
+DATABASE_PATH = os.path.join(DATABASE_DIR, "360viewer.db")
+
+DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
+
+engine = create_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(bind=engine)
+meta = MetaData()
+meta.reflect(bind=engine)
+poi_table = meta.tables["poi"]
+pano_table = meta.tables.get("pano")
+
+pano_repo, poi_repo = PanoRepository(SessionLocal, pano_table), POIRepository(SessionLocal, poi_table)
+pano_controller, poi_controller = PanoController(pano_repo), PoiController(poi_repo)
+
 @app.route("/pois", methods=["GET"])
 def get_all_pois():
-    return jsonify({"pois": list(pois.values())})
+    return jsonify(poi_controller.get_all_pois())
 
-### 2. Create a New POI
 @app.route("/pois", methods=["POST"])
 def create_poi():
     data = request.json
-    poi_id = str(uuid.uuid4())  # Generate a unique ID
-    new_poi = {
-        "id": poi_id,
-        "name": data.get("name", ""),
-        "ath": data.get("ath", 0),
-        "atv": data.get("atv", 0),
-        "description": data.get("description", ""),
-        "image_url": data.get("image_url", ""),
-    }
-    pois[poi_id] = new_poi
-    return jsonify({"message": "POI created", "poi": new_poi}), 201
+    poi_id = int(uuid.uuid4().int % 10**9)
+    try:
+        new_poi = POIModel(
+            id=poi_id,
+            name=data.get("name", ""),
+            ath=float(data.get("ath", 0)),
+            atv=float(data.get("atv", 0)),
+            type=data.get("type", ""),
+            description=data.get("description", ""),
+            pdf=data.get("pdf", ""),
+            video=data.get("video", "")
+        )
+    except Exception as e:
+        return jsonify({"error": f"Invalid data: {str(e)}"}), 400
+    poi_controller.add_poi(new_poi)
+    return jsonify({"id": poi_id, "message": "POI created successfully"}), 201
 
-### 3. Get a Single POI
 @app.route("/pois/<poi_id>", methods=["GET"])
 def get_poi(poi_id):
-    poi = pois.get(poi_id)
-    if not poi:
+    response = poi_controller.get_poi(poi_id)
+    if not response:
         return jsonify({"error": "POI not found"}), 404
-    return jsonify(poi)
+    return jsonify(response)
 
-### 4. Update an Existing POI
 @app.route("/pois/<poi_id>", methods=["PUT"])
 def update_poi(poi_id):
-    if poi_id not in pois:
-        return jsonify({"error": "POI not found"}), 404
-
     data = request.json
-    pois[poi_id].update({
-        "name": data.get("name", pois[poi_id]["name"]),
-        "ath": data.get("ath", pois[poi_id]["ath"]),
-        "atv": data.get("atv", pois[poi_id]["atv"]),
-        "description": data.get("description", pois[poi_id]["description"]),
-        "image_url": data.get("image_url", pois[poi_id]["image_url"]),
-    })
-    return jsonify({"message": "POI updated", "poi": pois[poi_id]})
+    response = poi_controller.update_poi(poi_id, data)
+    if "error" in response:
+        return jsonify(response), 404
+    return jsonify({"message": "POI updated", "poi": response})
 
-### 5. Delete a POI
 @app.route("/pois/<poi_id>", methods=["DELETE"])
 def delete_poi(poi_id):
-    if poi_id in pois:
-        del pois[poi_id]
-        return jsonify({"message": "POI deleted"})
-    return jsonify({"error": "POI not found"}), 404
+    response = poi_controller.delete_poi(poi_id)
+    if "error" in response:
+        return jsonify(response), 404
+    return jsonify({"message": "POI deleted"})
 
-### 6. Get All Images
-@app.route("/images", methods=["GET"])
-def get_all_images():
-    images = os.listdir(IMAGE_FOLDER)
-    return jsonify({"images": images})
+@app.route("/panos", methods=["GET"])
+def get_all_panos():
+    return jsonify(pano_controller.get_all_panos())
 
-### 7. Get a Specific Image
-@app.route("/images/<filename>", methods=["GET"])
-def get_image(filename):
-    image_path = os.path.join(IMAGE_FOLDER, filename)
-    if os.path.exists(image_path):
-        return send_from_directory(IMAGE_FOLDER, filename)
-    return jsonify({"error": "Image not found"}), 404
+@app.route("/panos/<pano_id>", methods=["GET"])
+def get_pano(pano_id):
+    response = pano_controller.get_pano(pano_id)
+    if not response:
+        return jsonify({"error": "Panorama not found"}), 404
+    return jsonify(response)
 
-# Run Flask App
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=8000, debug=True)
