@@ -32,7 +32,7 @@ const loadKrpano = (id) => {
 
             window.getPos = getPos;
 
-            const loadHotspot = (poi) => {
+            const loadHotspot = (poi, panoid) => {
                 poi.type = poi.type == "nav" ? "green" : "blue";
 
                 let validpoi = {
@@ -56,6 +56,26 @@ const loadKrpano = (id) => {
       `);
 
                 // add poi to backend
+                //let id = await post(validpoi)
+                // fetch pano again
+                //pano.pushid(id)
+                //post(pano)
+                // push poi to pano
+
+                validpoi.pano_id = panoid;
+
+                const post_poi = "http://localhost:8000/pois";
+
+                fetch(post_poi, {
+                    method: "POST", // Specify the method as POST
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(validpoi),
+                })
+                    .then((response) => response.json()) // Parse the JSON response
+                    .then((data) => console.log("Success:", data)) // Handle the response data
+                    .catch((error) => console.error("Error:", error)); // Handle any errors
             };
 
             window.loadHotspot = loadHotspot;
@@ -122,8 +142,7 @@ const loadKrpano = (id) => {
 
         await Promise.all(
             poi_ids.map((id) =>
-                // fetch(`./poi/${id}.json`)
-                fetch(`http://localhost:8000/panos/${id}`)
+                fetch(`http://localhost:8000/pois/${id}`) // fetch pois not panos
                     .then((res) => {
                         console.log(res);
                         return res.json();
@@ -167,7 +186,7 @@ const loadKrpano = (id) => {
         console.log("POIs added dynamically.");
     }
 
-    fetch(`./pano/${id}.json`)
+    fetch(`http://localhost:8000/panos/${id}`)
         .then((res) => res.json())
         .then((pano) => {
             fetch(pano.url)
