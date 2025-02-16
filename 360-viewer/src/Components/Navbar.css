@@ -1,0 +1,25 @@
+nav{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    background-color: #333;
+    padding: 10px 20px;
+    color: white;
+}
+
+.logo-header{
+    display: flex;
+    align-items: center;
+}
+
+#ids-logo{
+    width: 100px;  
+    height: 100px;
+    margin-right: 10px; 
+}
+
+h2{
+    margin: 0;
+    font-size: 20px;
+}
+
