@@ -20,11 +20,16 @@ export default function Krpano() {
     });
     // Function to toggle the visibility of the info div and set text
 
+    // Extract the `id` from the query string in the URL
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const id = queryParams.get("id"); // Extract the `id` from the URL query
+
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Submitting POI:", poiData);
         // Submit logic here
-        window.loadHotspot(poiData);
+        window.loadHotspot(poiData, id);
     };
 
     // handle click on poi behavior
@@ -80,11 +85,6 @@ export default function Krpano() {
             [name]: value,
         }));
     };
-
-    // Extract the `id` from the query string in the URL
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const id = queryParams.get("id"); // Extract the `id` from the URL query
 
     useEffect(() => {
         window.handlePoiClick = handlePoiClick;
