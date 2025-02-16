@@ -69,8 +69,8 @@ export default function Krpano() {
 
             {/* Info Div */}
             {isInfoVisible && (
-                <div id="info-div" class="centeredbox">
-                    <div class="centeredinnerbox">
+                <div id="info-div" className="centeredbox">
+                    <div className="centeredinnerbox">
                         <p id="info_text">{infoText}</p>
                         <button
                             id="exit_button"

@@ -6,12 +6,9 @@ export default function Gallery() {
     const [panos, setPanos] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    console.log("rendering gallery component");
-
 
     useEffect(() => {
-        console.log('starting fetch');
-        fetch('http://localhost:8000/pois')
+        fetch('http://localhost:8000/panos')
         .then(res => {
             if (!res.ok) {
                 throw new Error(`HTTP error status ${res.status}`);
