@@ -8,10 +8,40 @@ export default function Krpano() {
     // State to manage the visibility of the info div
     const [isInfoVisible, setIsInfoVisible] = useState(false);
     const [infoText, setInfoText] = useState(""); // Store info text
+    const [editMode, setEditMode] = useState(true);
+    const [choosePoiLoc, setChoosePoiLoc] = useState(true);
     // Function to toggle the visibility of the info div and set text
+
+    // handle click on poi behavior
     const handlePoiClick = (visible, description) => {
         setInfoText(description);
         setIsInfoVisible(visible);
+
+        console.log(window.getPos());
+    };
+
+    const handleChooseLocation = () => {
+        console.log("Set location mode enabled. Waiting for user click...");
+
+        // Add event listener that runs only once
+        setTimeout(() => {
+            const handleClick = (event) => {
+                console.log("Mouse clicked at:", event.clientX, event.clientY);
+
+                // Set choosePoiLoc to false after clicking
+                setChoosePoiLoc(false);
+
+                // Execute if choosePoiLoc was true before click
+                console.log("Logging click location...");
+                console.log(window.getPos());
+
+                // Remove event listener after executing once
+                window.removeEventListener("click", handleClick);
+            };
+
+            // Add event listener that runs only once
+            window.addEventListener("click", handleClick, { once: true });
+        }, 0); // Minimal delay ensures the button's event is handled first
     };
 
     const changeID = (id) => {
@@ -32,6 +62,10 @@ export default function Krpano() {
     return (
         <div id="app">
             <div id="krpano-target"></div>
+
+            <button onClick={() => handleChooseLocation()} class="centeredbox">
+                get position
+            </button>
 
             {/* Info Div */}
             {isInfoVisible && (
