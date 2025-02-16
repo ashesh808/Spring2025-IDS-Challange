@@ -1,25 +1,30 @@
 import sqlite3
 
-# Path to the database file
-DB_PATH = "360viewer.db"  # Adjust path based on where test_db.py is located
+DB_PATH = "360viewer.db"  # Adjust the path if needed
 
 def test_query():
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         
-        # Execute query
-        cursor.execute("DELETE FROM poi;")
+        # Enable foreign key constraints (needed if poi has related entries)
+        cursor.execute("PRAGMA foreign_keys = ON;")
 
+        # Delete all rows from poi
+        cursor.execute("DELETE FROM poi;")
+        conn.commit()  # Ensure changes are saved
+
+        # Verify deletion
         cursor.execute("SELECT * FROM poi;")
         rows = cursor.fetchall()
-        
+
         # Print results
         if rows:
+            print("Rows still present in 'poi' table:")
             for row in rows:
                 print(row)
         else:
-            print("No data found in 'poi' table!")
+            print("All POIs deleted successfully!")
 
         # Close connection
         conn.close()

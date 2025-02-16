@@ -23,6 +23,7 @@
 360-viewer/yarn-error.log*
 
 #Backend
+360-viewer-be/db/360viewer.db
 360-viewer-be/__pycache__
 360-viewer-be/venv
 360-viewer-be/Controllers/__pycache__
