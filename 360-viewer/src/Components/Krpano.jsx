@@ -11,6 +11,7 @@ export default function Krpano() {
 
     const [choosingLocation, setChoosingLocation] = useState(false);
     const [editMode, setEditMode] = useState(true);
+    
     const [poiData, setPoiData] = useState({
         type: "",
         title: "",
