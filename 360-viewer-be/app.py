@@ -50,7 +50,7 @@ meta.reflect(bind=engine)
 poi_table = meta.tables["poi"]
 pano_table = meta.tables.get("pano")
 
-pano_repo, poi_repo = PanoRepository(SessionLocal, pano_table), POIRepository(SessionLocal, poi_table)
+pano_repo, poi_repo = PanoRepository(SessionLocal, pano_table, poi_table), POIRepository(SessionLocal, poi_table)
 pano_controller, poi_controller = PanoController(pano_repo), PoiController(poi_repo)
 
 @app.route("/pois", methods=["GET"])
@@ -64,6 +64,7 @@ def create_poi():
     try:
         new_poi = POIModel(
             id=poi_id,
+            pano_id = data.get("pano_id", 1),
             name=data.get("name", ""),
             ath=float(data.get("ath", 0)),
             atv=float(data.get("atv", 0)),
