@@ -17,8 +17,6 @@ export default function GalleryIcon({ name, id, ath, atv, type, description, pdf
                 <div className="card-content">
                     <img src={imagePath} alt="{name}" className="card-image"/>
                     <div>
-                        <p>Description: {description}</p>
-                        <p>ath: {ath}</p>
                         <button onClick={handleViewClick}>Go to View {id}</button>
                     </div>
                 </div>
