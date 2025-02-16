@@ -197,6 +197,8 @@ const loadKrpano = (id) => {
                     // add poi ids here
                     poi_ids = pano.pois;
 
+                    console.log("panoIds:", pano);
+
                     const parser = new DOMParser();
 
                     const xmlDoc = parser.parseFromString(xml, "text/xml");

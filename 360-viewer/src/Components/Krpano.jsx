@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import loadKrpano from "../loadKrpano";
 import { useLocation } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
 import "./krpano.css";
 
 export default function Krpano() {
@@ -11,7 +12,7 @@ export default function Krpano() {
 
     const [choosingLocation, setChoosingLocation] = useState(false);
     const [editMode, setEditMode] = useState(true);
-    
+
     const [poiData, setPoiData] = useState({
         type: "",
         title: "",
@@ -40,6 +41,8 @@ export default function Krpano() {
 
         console.log(window.getPos());
     };
+
+    const handlePoiDelete = () => {};
 
     const handleChooseLocation = () => {
         console.log("Set location mode enabled. Waiting for user click...");
@@ -113,6 +116,9 @@ export default function Krpano() {
                             onClick={() => setIsInfoVisible(false)}
                         >
                             <FaTimes />
+                        </button>
+                        <button id="delete" onClick={handlePoiDelete}>
+                            <FaTrashAlt />
                         </button>
                     </div>
                 </div>
