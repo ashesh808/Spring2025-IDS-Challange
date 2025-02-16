@@ -142,8 +142,7 @@ const loadKrpano = (id) => {
 
         await Promise.all(
             poi_ids.map((id) =>
-                // fetch(`./poi/${id}.json`)
-                fetch(`http://localhost:8000/panos/${id}`)
+                fetch(`http://localhost:8000/pois/${id}`) // fetch pois not panos
                     .then((res) => {
                         console.log(res);
                         return res.json();
