@@ -43,7 +43,7 @@ const loadKrpano = (id) => {
             window.deletePOI = deletePOI;
             window.getPos = getPos;
 
-            const loadHotspot = (poi, panoid) => {
+            const loadHotspot = async (poi, panoid) => {
                 poi.type = poi.type == "nav" ? "green" : "blue";
 
                 let validpoi = {
@@ -59,15 +59,6 @@ const loadKrpano = (id) => {
 
                 console.log(validpoi);
 
-                krpano.call(`
-        addhotspot(${validpoi.name});
-        set(hotspot[${validpoi.name}].url, ${validpoi.url});
-        set(hotspot[${validpoi.name}].ath, ${validpoi.ath});
-        set(hotspot[${validpoi.name}].atv, ${validpoi.atv});
-        set(hotspot[${validpoi.name}].onclick, ${validpoi.onclick});
-        set(hotspot[${validpoi.name}].scale, ${validpoi.scale});
-      `);
-
                 // add poi to backend
                 //let id = await post(validpoi)
                 // fetch pano again
@@ -79,16 +70,40 @@ const loadKrpano = (id) => {
 
                 const post_poi = "http://localhost:8000/pois";
 
-                fetch(post_poi, {
-                    method: "POST", // Specify the method as POST
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(validpoi),
-                })
-                    .then((response) => response.json()) // Parse the JSON response
-                    .then((data) => console.log("Success:", data)) // Handle the response data
-                    .catch((error) => console.error("Error:", error)); // Handle any errors
+                try {
+                    const response = await fetch(post_poi, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(validpoi),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! Status: ${response.status}`
+                        );
+                    }
+
+                    const data = await response.json();
+                    console.log("Success:", data);
+                    validpoi.id = data.id; // Ensure `valid` is properly defined in scope
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+
+                validpoi.onclick = getOnClick(validpoi);
+
+                console.log(`finalpoi: ${validpoi}`);
+
+                krpano.call(`
+        addhotspot(${validpoi.name});
+        set(hotspot[${validpoi.name}].url, ${validpoi.url});
+        set(hotspot[${validpoi.name}].ath, ${validpoi.ath});
+        set(hotspot[${validpoi.name}].atv, ${validpoi.atv});
+        set(hotspot[${validpoi.name}].onclick, ${validpoi.onclick});
+        set(hotspot[${validpoi.name}].scale, ${validpoi.scale});
+      `);
             };
 
             window.loadHotspot = loadHotspot;

@@ -51,8 +51,6 @@ export default function Krpano() {
         console.log(window.getPos());
     };
 
-    const handlePoiDelete = () => {};
-
     const handleChooseLocation = () => {
         console.log("Set location mode enabled. Waiting for user click...");
 
@@ -151,14 +149,14 @@ export default function Krpano() {
             <div id="krpano-target"></div>
             <button
                 onClick={() => setEditMode(!editMode)}
-                // className="top-right-button"
+                className="top-right-button"
             >
                 {editMode ? "Close POI Editor" : "Add POI"}
             </button>
 
             <button
                 onClick={() => setDeleteMode(!deleteMode)}
-                className="top-right-button"
+                className="delete-button"
             >
                 {deleteMode ? "Cancel" : "Delete"}
             </button>
