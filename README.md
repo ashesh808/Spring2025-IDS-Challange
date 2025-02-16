@@ -1,15 +1,12 @@
 # IDS & SCSU Hackathon Feb. 2025 Challenge - 360° Viewer POIs
 
-## Getting Started
+## Team:  Team Brendan Chermack
 
- 1. Create a new repository, using this repo as the template.
- 2. Add the following users as collaborators:
-	 - `mfitzer_ids`
-	 - `jknudson-ids`
-
-## Team:  _insert team name_
-
-- _Member names here_
+- Andrew Clayton
+- Justin Halvorson
+- John Klein
+- Ashesh Nepal
+- Serenity Vang
 
 ## Challenge Description
 
@@ -22,7 +19,7 @@ For this challenge, we're looking to take our 360° viewer to the next level by 
 - **JavaScript** – for core functionality and dynamic interactions.
 - **KRPano** – a powerful 360° rendering library for panoramic image visualization.   
 - **ReactJS** – to create a smooth and responsive user interface for managing POIs.
-- **Backend** – any backend technology can be used for POI management if backend is desired
+- **Python** with **Flask** and **SQLite** - to persist data and provide an API
 
 ## Test Data
 
@@ -48,14 +45,14 @@ This challenge uses a sample krpano xml file.
 In the 360-viewer folder, run `npm install` if the app has not been run before. Then run `npm run dev` to run the app locally.
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-_Teams update this section with any additional instructions on how to run the application._
+In the 360-viewer-be folder, run `pip install -r requirements.txt` if the app has not been run before. Then run `python -m flask run` to run the app locally. Open [http://localhost:8000](http://localhost:8000) to view the API's Swagger page in your browser.
 
 ## Hackathon Submission Checklist
 
- - [ ] Committed all prototype code
- - [ ] Updated README with instructions for running the application
+ - [-] Committed all prototype code
+ - [-] Updated README with instructions for running the application
  - [ ] Transfer repository ownership to `mfitzer-ids`
- - [ ] Created presentation showcasing our work using the PresentationTemplate.pptx
+ - [-] Created presentation showcasing our work using the PresentationTemplate.pptx
  - [ ] Committed the presentation to the repository root folder in PDF format
 
 ## Judging
