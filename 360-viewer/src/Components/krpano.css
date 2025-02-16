@@ -23,7 +23,7 @@
     right: 20px; /* Adjust as needed for spacing from the right */
     z-index: 100; /* Ensure it's on top of other elements */
     padding: 10px 20px; /* Optional: Adds padding to the button */
-    background-color: #007bff; /* Optional: Button background color */
+    background-color: #194672; /* Optional: Button background color */
     color: white; /* Optional: Button text color */
     border: none; /* Optional: Removes border */
     border-radius: 5px; /* Optional: Rounded corners */
@@ -33,7 +33,7 @@
 }
 
 .top-right-button:hover {
-    background-color: #0056b3; /* Optional: Changes button color on hover */
+    background-color: #194672; /* Optional: Changes button color on hover */
 }
 
 .centeredbox {
@@ -104,7 +104,8 @@
     width: 100%;
     padding: 8px;
     border: none;
-    background: #007bff;
+    /* background: #007bff; */
+    background: #194672;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -112,5 +113,6 @@
 }
 
 .poi-form button:hover {
-    background: #0056b3;
+    /* background: #0056b3; */
+    background: #194672;
 }

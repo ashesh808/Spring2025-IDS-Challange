@@ -51,6 +51,8 @@ export default function Krpano() {
         console.log(window.getPos());
     };
 
+    const handlePoiDelete = () => {};
+
     const handleChooseLocation = () => {
         console.log("Set location mode enabled. Waiting for user click...");
 
@@ -171,6 +173,9 @@ export default function Krpano() {
                             onClick={() => setIsInfoVisible(false)}
                         >
                             <FaTimes />
+                        </button>
+                        <button id="delete" onClick={handlePoiDelete}>
+                            <FaTrashAlt />
                         </button>
                     </div>
                 </div>
