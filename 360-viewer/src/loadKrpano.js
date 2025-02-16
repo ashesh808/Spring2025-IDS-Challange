@@ -23,6 +23,17 @@ const loadKrpano = (id) => {
             // Call loadxml with the modified XML (Ensure it's wrapped properly)
             krpano.call(`loadxml('${xmlStr}', KEEP);`);
 
+            const getPos = () => {
+                let x = krpano.get("mouse.x");
+                let y = krpano.get("mouse.y");
+
+                return krpano.screentosphere(x, y);
+            };
+
+            window.getPos = getPos;
+
+            //krpano.call(`addCallback(onmousedown, js(console.log("here)))`);
+
             // Load showtext plugin (Ensure it loads correctly)
             // krpano.call("loadpano('%VIEWER%/plugins/showtext.xml', KEEP);");
 
@@ -162,7 +173,7 @@ const loadKrpano = (id) => {
                     // eslint-disable-next-line no-undef
                     embedpano({
                         xml: xmlStr, // Corrected from `null` to `xmlStr`
-                        //sameorigin: false,
+                        sameorigin: false,
                         html5: "prefer",
                         consolelog: true,
                         capturetouch: false, // prevent default touch event handling from being disabled
