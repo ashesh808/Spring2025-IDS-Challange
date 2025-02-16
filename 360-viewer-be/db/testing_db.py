@@ -10,6 +10,7 @@ def test_query():
         
         # Execute query
         cursor.execute("DELETE FROM poi;")
+
         cursor.execute("SELECT * FROM poi;")
         rows = cursor.fetchall()
         
