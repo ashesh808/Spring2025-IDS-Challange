@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 
 export default function GalleryIcon({ name, id, ath, atv, type, description, pdf, video }) {

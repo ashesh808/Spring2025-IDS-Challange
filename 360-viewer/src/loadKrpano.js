@@ -32,6 +32,34 @@ const loadKrpano = (id) => {
 
             window.getPos = getPos;
 
+            const loadHotspot = (poi) => {
+                poi.type = poi.type == "nav" ? "green" : "blue";
+
+                let validpoi = {
+                    name: poi.title,
+                    ath: poi.x,
+                    atv: poi.y,
+                    url: getIcon(poi) || "./info-icon.png",
+                    onclick: getOnClick(poi),
+                    scale: 0.1,
+                };
+
+                console.log(validpoi);
+
+                krpano.call(`
+        addhotspot(${validpoi.name});
+        set(hotspot[${validpoi.name}].url, ${validpoi.url});
+        set(hotspot[${validpoi.name}].ath, ${validpoi.ath});
+        set(hotspot[${validpoi.name}].atv, ${validpoi.atv});
+        set(hotspot[${validpoi.name}].onclick, ${validpoi.onclick});
+        set(hotspot[${validpoi.name}].scale, ${validpoi.scale});
+      `);
+
+                // add poi to backend
+            };
+
+            window.loadHotspot = loadHotspot;
+
             //krpano.call(`addCallback(onmousedown, js(console.log("here)))`);
 
             // Load showtext plugin (Ensure it loads correctly)
