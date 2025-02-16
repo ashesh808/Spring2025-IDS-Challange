@@ -3,11 +3,9 @@ info:
   title: 360 Viewer API
   description: API for managing Panoramas and Points of Interest (POIs) in a 360 viewer.
   version: 1.0.0
-
 servers:
   - url: http://127.0.0.1:8000
     description: Local development server
-
 paths:
   /pois:
     get:
@@ -22,7 +20,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/POI"
-
     post:
       summary: Create a new POI
       description: Add a new Point of Interest (POI) to the system.
@@ -48,7 +45,6 @@ paths:
                     example: "POI created successfully"
         "400":
           description: Invalid request data
-
   /pois/{poi_id}:
     get:
       summary: Get a specific POI
@@ -68,7 +64,6 @@ paths:
                 $ref: "#/components/schemas/POI"
         "404":
           description: POI not found
-
     put:
       summary: Update a POI
       description: Modify the details of an existing POI.
@@ -89,7 +84,6 @@ paths:
           description: POI updated successfully
         "404":
           description: POI not found
-
     delete:
       summary: Delete a POI
       description: Remove a POI from the system.
@@ -104,7 +98,6 @@ paths:
           description: POI deleted successfully
         "404":
           description: POI not found
-
   /panos:
     get:
       summary: Get all Panoramas
@@ -118,7 +111,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Pano"
-
   /panos/{pano_id}:
     get:
       summary: Get a specific Panorama
@@ -138,7 +130,6 @@ paths:
                 $ref: "#/components/schemas/Pano"
         "404":
           description: Panorama not found
-
 components:
   schemas:
     POI:
@@ -147,6 +138,9 @@ components:
         id:
           type: integer
           example: 123456789
+        pano_id:
+          type: integer
+          example: 1
         name:
           type: string
           example: "POI 1"
@@ -170,20 +164,18 @@ components:
         video:
           type: string
           example: "video.mp4"
-
     Pano:
       type: object
       properties:
         id:
           type: integer
           example: 1
-        preview:
-          type: string
-          example: "1"
         url:
           type: string
           format: uri
           example: "https://api.viewer.immersiondata.com/api/v1/panoramas/311975/krpano.xml"
-        title:
-          type: string
-          example: "Home Image"
+        pois:
+          type: array
+          items:
+            type: integer
+          example: [1, 2, 3]
