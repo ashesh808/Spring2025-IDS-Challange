@@ -1,7 +1,7 @@
 import sqlite3
 
 # Path to the database file
-DB_PATH = "../360viewer.db"  # Adjust path based on where test_db.py is located
+DB_PATH = "360viewer.db"  # Adjust path based on where test_db.py is located
 
 def test_query():
     try:
@@ -9,6 +9,7 @@ def test_query():
         cursor = conn.cursor()
         
         # Execute query
+        cursor.execute("DELETE FROM poi;")
         cursor.execute("SELECT * FROM poi;")
         rows = cursor.fetchall()
         

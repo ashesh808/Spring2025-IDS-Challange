@@ -23,6 +23,16 @@ const loadKrpano = (id) => {
             // Call loadxml with the modified XML (Ensure it's wrapped properly)
             krpano.call(`loadxml('${xmlStr}', KEEP);`);
 
+            const deletePOI = (title, id) => {
+                console.log(`deleting id: ${id}, title: ${title}`);
+
+                krpano.call(`removehotspot(${title})`);
+
+                fetch(`http://localhost:8000/pois/${id}`, {
+                    method: "DELETE",
+                });
+            };
+
             const getPos = () => {
                 let x = krpano.get("mouse.x");
                 let y = krpano.get("mouse.y");
@@ -30,6 +40,7 @@ const loadKrpano = (id) => {
                 return krpano.screentosphere(x, y);
             };
 
+            window.deletePOI = deletePOI;
             window.getPos = getPos;
 
             const loadHotspot = (poi, panoid) => {
@@ -41,7 +52,9 @@ const loadKrpano = (id) => {
                     atv: poi.y,
                     url: getIcon(poi) || "./info-icon.png",
                     onclick: getOnClick(poi),
-                    scale: 0.1,
+                    scale: 1,
+                    type: poi.type,
+                    description: poi.description,
                 };
 
                 console.log(validpoi);
@@ -112,11 +125,11 @@ const loadKrpano = (id) => {
     function getOnClick(poi) {
         switch (poi.type) {
             case "blue":
-                return `js(window.handlePoiClick(true, ${poi.description})); lookto(${poi.ath}, ${poi.atv}, 90);`;
+                return `js(window.handlePoiClick(true, ${poi.description}, ${poi.name}, ${poi.id})); lookto(${poi.ath}, ${poi.atv}, 90);`;
             case "red":
                 return `lookto(${poi.ath}, ${poi.atv}, 90);`;
             case "green":
-                return `js(window.changeID(${poi.description}));"`;
+                return `js(window.changeID(${poi.description}, ${poi.name}, ${poi.id}));"`;
             default:
                 return ""; // Ensure it always returns a valid string
         }
@@ -129,7 +142,7 @@ const loadKrpano = (id) => {
             case "red":
                 return null;
             case "green":
-                return `./poi-icon.png`;
+                return `./nav-icon.png`;
             default:
                 return null;
         }
@@ -164,7 +177,7 @@ const loadKrpano = (id) => {
                     atv: poi.atv,
                     url: getIcon(poi) || "./info-icon.png",
                     onclick: getOnClick(poi),
-                    scale: 0.1,
+                    scale: 1,
                 }));
 
                 // console.log(poihotspots); // Debugging: Log POI data
@@ -196,6 +209,8 @@ const loadKrpano = (id) => {
 
                     // add poi ids here
                     poi_ids = pano.pois;
+
+                    console.log("panoIds:", pano);
 
                     const parser = new DOMParser();
 
