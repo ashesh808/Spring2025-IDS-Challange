@@ -62,16 +62,16 @@ const loadKrpano = (id) => {
                 //post(pano)
                 // push poi to pano
 
-                validpoi.id = panoid;
+                validpoi.pano_id = panoid;
 
                 const post_poi = "http://localhost:8000/pois";
 
                 fetch(post_poi, {
                     method: "POST", // Specify the method as POST
                     headers: {
-                        "Content-Type": "application/json", 
+                        "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(validpoi), 
+                    body: JSON.stringify(validpoi),
                 })
                     .then((response) => response.json()) // Parse the JSON response
                     .then((data) => console.log("Success:", data)) // Handle the response data
@@ -186,7 +186,7 @@ const loadKrpano = (id) => {
         console.log("POIs added dynamically.");
     }
 
-    fetch(`http://localhost:8000/panos/${id}`) // todo: fetch pano data
+    fetch(`http://localhost:8000/panos/${id}`)
         .then((res) => res.json())
         .then((pano) => {
             fetch(pano.url)
