@@ -27,10 +27,10 @@ class POIRepository:
         """Insert a new POI into the database and debug rollback issues"""
         session = self.session_factory()
         try:
-            print(f"🟢 Inserting POI: {poi_data}")  # Debug
+            print(f"🟢 Inserting POI: {poi_data}")
             query = self.poi_table.insert().values(
                 id=poi_data.id,
-                pano_id=1,
+                pano_id=poi_data.pano_id,
                 name=poi_data.name,
                 description=poi_data.description,
                 type=poi_data.type,
