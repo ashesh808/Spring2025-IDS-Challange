@@ -51,9 +51,9 @@ In the 360-viewer-be folder, run `pip install -r requirements.txt` if the app ha
 
  - [-] Committed all prototype code
  - [-] Updated README with instructions for running the application
- - [ ] Transfer repository ownership to `mfitzer-ids`
+ - [-] Transfer repository ownership to `mfitzer-ids`
  - [-] Created presentation showcasing our work using the PresentationTemplate.pptx
- - [ ] Committed the presentation to the repository root folder in PDF format
+ - [-] Committed the presentation to the repository root folder in PDF format
 
 ## Judging
 
