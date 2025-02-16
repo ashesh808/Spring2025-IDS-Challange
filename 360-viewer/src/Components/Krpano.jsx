@@ -9,9 +9,10 @@ export default function Krpano() {
     // State to manage the visibility of the info div
     const [isInfoVisible, setIsInfoVisible] = useState(false);
     const [infoText, setInfoText] = useState(""); // Store info text
+    const [deleteMode, setDeleteMode] = useState(false);
 
     const [choosingLocation, setChoosingLocation] = useState(false);
-    const [editMode, setEditMode] = useState(true);
+    const [editMode, setEditMode] = useState(false);
 
     const [poiData, setPoiData] = useState({
         type: "",
@@ -35,7 +36,15 @@ export default function Krpano() {
     };
 
     // handle click on poi behavior
-    const handlePoiClick = (visible, description) => {
+    const handlePoiClick = (visible, description, id, title) => {
+        console.log("Info Clicked!");
+        console.log(deleteMode);
+        if (deleteMode) {
+            console.log("Deleting Info POI");
+            window.deletePOI(title, id);
+            return;
+        }
+
         setInfoText(description);
         setIsInfoVisible(visible);
 
@@ -78,7 +87,15 @@ export default function Krpano() {
         }, 0); // Minimal delay ensures the button's event is handled first
     };
 
-    const changeID = (id) => {
+    const changeID = (id, poi_id, poi_title) => {
+        console.log("NAV clicked!");
+        console.log(deleteMode);
+        if (deleteMode) {
+            console.log("deleting nav POI");
+            window.deletePOI(poi_title, poi_id);
+            return;
+        }
+
         window.location.href = `https://localhost:3000/view?id=${id}`;
     };
 
@@ -96,6 +113,39 @@ export default function Krpano() {
         loadKrpano(id);
     }, []);
 
+    useEffect(() => {
+        const changeID = (id, poi_title, poi_id) => {
+            console.log("NAV clicked!");
+            console.log(deleteMode);
+            if (deleteMode) {
+                console.log("deleting nav POI");
+                window.deletePOI(poi_title, poi_id);
+                return;
+            }
+
+            window.location.href = `https://localhost:3000/view?id=${id}`;
+        };
+
+        // handle click on poi behavior
+        const handlePoiClick = (visible, description, title, id) => {
+            console.log("Info Clicked!");
+            console.log(deleteMode);
+            if (deleteMode) {
+                console.log("Deleting Info POI");
+                window.deletePOI(title, id);
+                return;
+            }
+
+            setInfoText(description);
+            setIsInfoVisible(visible);
+
+            console.log(window.getPos());
+        };
+
+        window.handlePoiClick = handlePoiClick;
+        window.changeID = changeID;
+    }, [deleteMode]);
+
     return (
         <div id="app">
             <div id="krpano-target"></div>
@@ -104,6 +154,13 @@ export default function Krpano() {
                 className="top-right-button"
             >
                 {editMode ? "Close POI Editor" : "Add POI"}
+            </button>
+
+            <button
+                onClick={() => setDeleteMode(!deleteMode)}
+                className="delete-button"
+            >
+                {deleteMode ? "Cancel" : "Delete"}
             </button>
 
             {/* Info Div */}
@@ -174,31 +231,3 @@ export default function Krpano() {
         </div>
     );
 }
-
-// Styles for the info div (simple styling for now)
-//const infoDivStyle = {
-//    position: "fixed",
-//    bottom: "20px",
-//    left: "50%",
-//    transform: "translateX(-50%)",
-//    backgroundColor: "#000",
-//    color: "#fff",
-//    padding: "15px",
-//    borderRadius: "5px",
-//    zIndex: 9999,
-//    maxWidth: "90%",
-//    textAlign: "center",
-//    display: "flex",
-//};
-//
-//const innerbox = {
-//    backgroundColor: "#ff6f61", // Add a color for the button
-//    border: "none",
-//    padding: "10px 20px",
-//    color: "#fff",
-//    cursor: "pointer",
-//    borderRadius: "5px",
-//    display: "flex",
-//    alignItems: "center", // Align the icon and text
-//    // gap: "8px", // Space between the icon and text
-//};

@@ -23,6 +23,16 @@ const loadKrpano = (id) => {
             // Call loadxml with the modified XML (Ensure it's wrapped properly)
             krpano.call(`loadxml('${xmlStr}', KEEP);`);
 
+            const deletePOI = (title, id) => {
+                console.log(`deleting id: ${id}, title: ${title}`);
+
+                krpano.call(`removehotspot(${title})`);
+
+                fetch(`http://localhost:8000/pois/${id}`, {
+                    method: "DELETE",
+                });
+            };
+
             const getPos = () => {
                 let x = krpano.get("mouse.x");
                 let y = krpano.get("mouse.y");
@@ -30,9 +40,10 @@ const loadKrpano = (id) => {
                 return krpano.screentosphere(x, y);
             };
 
+            window.deletePOI = deletePOI;
             window.getPos = getPos;
 
-            const loadHotspot = (poi, panoid) => {
+            const loadHotspot = async (poi, panoid) => {
                 poi.type = poi.type == "nav" ? "green" : "blue";
 
                 let validpoi = {
@@ -41,19 +52,12 @@ const loadKrpano = (id) => {
                     atv: poi.y,
                     url: getIcon(poi) || "./info-icon.png",
                     onclick: getOnClick(poi),
-                    scale: 0.1,
+                    scale: 1,
+                    type: poi.type,
+                    description: poi.description,
                 };
 
                 console.log(validpoi);
-
-                krpano.call(`
-        addhotspot(${validpoi.name});
-        set(hotspot[${validpoi.name}].url, ${validpoi.url});
-        set(hotspot[${validpoi.name}].ath, ${validpoi.ath});
-        set(hotspot[${validpoi.name}].atv, ${validpoi.atv});
-        set(hotspot[${validpoi.name}].onclick, ${validpoi.onclick});
-        set(hotspot[${validpoi.name}].scale, ${validpoi.scale});
-      `);
 
                 // add poi to backend
                 //let id = await post(validpoi)
@@ -66,16 +70,40 @@ const loadKrpano = (id) => {
 
                 const post_poi = "http://localhost:8000/pois";
 
-                fetch(post_poi, {
-                    method: "POST", // Specify the method as POST
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(validpoi),
-                })
-                    .then((response) => response.json()) // Parse the JSON response
-                    .then((data) => console.log("Success:", data)) // Handle the response data
-                    .catch((error) => console.error("Error:", error)); // Handle any errors
+                try {
+                    const response = await fetch(post_poi, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(validpoi),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! Status: ${response.status}`
+                        );
+                    }
+
+                    const data = await response.json();
+                    console.log("Success:", data);
+                    validpoi.id = data.id; // Ensure `valid` is properly defined in scope
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+
+                validpoi.onclick = getOnClick(validpoi);
+
+                console.log(`finalpoi: ${validpoi}`);
+
+                krpano.call(`
+        addhotspot(${validpoi.name});
+        set(hotspot[${validpoi.name}].url, ${validpoi.url});
+        set(hotspot[${validpoi.name}].ath, ${validpoi.ath});
+        set(hotspot[${validpoi.name}].atv, ${validpoi.atv});
+        set(hotspot[${validpoi.name}].onclick, ${validpoi.onclick});
+        set(hotspot[${validpoi.name}].scale, ${validpoi.scale});
+      `);
             };
 
             window.loadHotspot = loadHotspot;
@@ -112,11 +140,11 @@ const loadKrpano = (id) => {
     function getOnClick(poi) {
         switch (poi.type) {
             case "blue":
-                return `js(window.handlePoiClick(true, ${poi.description})); lookto(${poi.ath}, ${poi.atv}, 90);`;
+                return `js(window.handlePoiClick(true, ${poi.description}, ${poi.name}, ${poi.id})); lookto(${poi.ath}, ${poi.atv}, 90);`;
             case "red":
                 return `lookto(${poi.ath}, ${poi.atv}, 90);`;
             case "green":
-                return `js(window.changeID(${poi.description}));"`;
+                return `js(window.changeID(${poi.description}, ${poi.name}, ${poi.id}));"`;
             default:
                 return ""; // Ensure it always returns a valid string
         }
@@ -129,7 +157,7 @@ const loadKrpano = (id) => {
             case "red":
                 return null;
             case "green":
-                return `./poi-icon.png`;
+                return `./nav-icon.png`;
             default:
                 return null;
         }
@@ -164,7 +192,7 @@ const loadKrpano = (id) => {
                     atv: poi.atv,
                     url: getIcon(poi) || "./info-icon.png",
                     onclick: getOnClick(poi),
-                    scale: 0.1,
+                    scale: 1,
                 }));
 
                 // console.log(poihotspots); // Debugging: Log POI data
